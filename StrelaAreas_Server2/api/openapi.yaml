@@ -1,0 +1,163 @@
+openapi: 3.0.2
+info:
+  title: Area API
+  version: "1.0"
+servers:
+- url: /api/v1
+paths:
+  /intersections/point:
+    post:
+      operationId: findPointIntersections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PointIntersectionRequest'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointIntersectionResponse'
+          description: OK
+      summary: Метод возвращает зоны, которые пересекаются с точкой, координаты которой
+        передаются в запросе.
+components:
+  schemas:
+    PointIntersectionRequest:
+      description: Запрос пересечений с точкой.
+      example:
+        latitude: 0.8008281904610115
+        interval:
+          from: 2000-01-23T04:56:07.000+00:00
+          to: 2000-01-23T04:56:07.000+00:00
+        levels:
+        - 1
+        - 1
+        longitude: 6.027456183070403
+      properties:
+        latitude:
+          description: Широта.
+          format: double
+          type: number
+        longitude:
+          description: Долгота.
+          format: double
+          type: number
+        levels:
+          items:
+            format: int32
+            type: integer
+          type: array
+        interval:
+          $ref: '#/components/schemas/Interval'
+      type: object
+    PointIntersectionResponse:
+      description: Ответ на запрос пересечений с точкой.
+      example:
+        areas:
+        - intervals:
+          - from: 2000-01-23T04:56:07.000+00:00
+            to: 2000-01-23T04:56:07.000+00:00
+          - from: 2000-01-23T04:56:07.000+00:00
+            to: 2000-01-23T04:56:07.000+00:00
+          route_id: 5
+          working_days:
+          - null
+          - null
+          level: 1
+          parent_id: 6
+          name: name
+          id: 0
+        - intervals:
+          - from: 2000-01-23T04:56:07.000+00:00
+            to: 2000-01-23T04:56:07.000+00:00
+          - from: 2000-01-23T04:56:07.000+00:00
+            to: 2000-01-23T04:56:07.000+00:00
+          route_id: 5
+          working_days:
+          - null
+          - null
+          level: 1
+          parent_id: 6
+          name: name
+          id: 0
+      properties:
+        areas:
+          description: Массив пересечений с зонами маршрутизатора.
+          items:
+            $ref: '#/components/schemas/AreaIntersection'
+          type: array
+      type: object
+    AreaIntersection:
+      description: Пересечение с зоной маршрутизатора.
+      example:
+        intervals:
+        - from: 2000-01-23T04:56:07.000+00:00
+          to: 2000-01-23T04:56:07.000+00:00
+        - from: 2000-01-23T04:56:07.000+00:00
+          to: 2000-01-23T04:56:07.000+00:00
+        route_id: 5
+        working_days:
+        - null
+        - null
+        level: 1
+        parent_id: 6
+        name: name
+        id: 0
+      properties:
+        id:
+          description: Идентификатор зоны.
+          format: int32
+          type: integer
+        parent_id:
+          description: Идентификатор родительской зоны.
+          format: int32
+          type: integer
+        level:
+          description: Уровень зоны.
+          format: int32
+          type: integer
+        name:
+          description: Наименоание зоны.
+          type: string
+        route_id:
+          description: Идентификатор (номер) маршрута.
+          format: int64
+          type: integer
+        working_days:
+          description: Массив дней недели.
+          items:
+            $ref: '#/components/schemas/WorkingDay'
+          type: array
+        intervals:
+          items:
+            $ref: '#/components/schemas/Interval'
+          type: array
+      type: object
+    WorkingDay:
+      description: День недели.
+      enum:
+      - MONDAY
+      - TUESDAY
+      - WEDNESDAY
+      - THURSDAY
+      - FRIDAY
+      - SATURDAY
+      - SUNDAY
+      type: string
+    Interval:
+      description: Интервал
+      example:
+        from: 2000-01-23T04:56:07.000+00:00
+        to: 2000-01-23T04:56:07.000+00:00
+      properties:
+        from:
+          description: Начало
+          format: date-time
+          type: string
+        to:
+          description: Конец
+          format: date-time
+          type: string
+      type: object
